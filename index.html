@@ -3,32 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>教室静音魔法阵 · 课堂游戏化管理系统</title>
-  <meta name="description" content="专为教师控班设计的多功能教室声音监测游戏。通过全班合作守护魔法阵或小组轮流静音PK，让学生自发保持安静。越安静得分越高！">
+  <title>静音挑战 · 越安静得分越高</title>
   
-  <!-- 引入 Google Fonts -->
+  <!-- 引入优质字体 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;900&family=Noto+Sans+SC:wght@500;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   
   <style>
-    /* ==========================================
-       设计系统与基本样式 (Dark Theme & Aesthetics)
-       ========================================== */
     :root {
-      --bg: #090d16;
-      --panel-bg: rgba(17, 24, 39, 0.8);
-      --border: rgba(56, 189, 248, 0.2);
-      --primary: #0ea5e9;
-      --primary-glow: rgba(14, 165, 233, 0.4);
+      --bg: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.4);
       --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.4);
-      --error: #ef4444;
-      --error-glow: rgba(239, 68, 68, 0.4);
-      --warning: #f59e0b;
       --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
@@ -38,179 +28,138 @@
     }
 
     body {
-      font-family: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at center, #1e1b4b 0%, var(--bg) 70%);
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      background: radial-gradient(circle at center, #111827 0%, var(--bg) 100%);
       color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    .main-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      border-radius: 32px;
+      padding: 40px;
       width: 100%;
-      flex: 1;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
       display: flex;
       flex-direction: column;
-      gap: 20px;
-    }
-
-    /* 头部设计 */
-    header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 15px 30px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .logo-icon {
-      font-size: 2.2rem;
-      animation: pulseIcon 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulseIcon {
-      0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--primary-glow)); }
-      100% { transform: scale(1.1); filter: drop-shadow(0 0 10px var(--primary)); }
+      gap: 30px;
     }
 
     h1 {
       font-size: 1.8rem;
       font-weight: 900;
+      letter-spacing: 1px;
       background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: 1px;
     }
 
-    .subtitle {
+    /* 积分展示 */
+    .score-container {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      padding: 20px 40px;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .score-label {
       font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 500;
-      margin-top: 2px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
     }
 
-    /* 三栏布局 */
-    .dashboard {
-      display: grid;
-      grid-template-columns: 320px 1fr 280px;
-      gap: 20px;
-      flex: 1;
+    .score-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 4.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: 0 0 20px var(--primary-glow);
+      line-height: 1;
     }
 
-    @media (max-width: 1024px) {
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* 通用玻璃面板 */
-    .glass-panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #38bdf8;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1.5px solid rgba(56, 189, 248, 0.15);
-      padding-bottom: 10px;
-    }
-
-    /* 左侧控制区样式 */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    label {
+    .points-speed {
       font-size: 0.9rem;
       font-weight: 700;
-      color: var(--text-muted);
+      color: var(--success);
+      margin-top: 8px;
+      height: 20px;
     }
 
-    .mode-select-btns {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .btn-mode {
-      background: #1e293b;
-      border: 1.5px solid #334155;
-      border-radius: 12px;
-      padding: 12px 15px;
-      color: var(--text);
-      font-weight: 700;
-      cursor: pointer;
+    /* 发光音量球 */
+    .visualizer-container {
+      width: 180px;
+      height: 180px;
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 10px;
-      text-align: left;
-      transition: var(--transition);
+      justify-content: center;
     }
 
-    .btn-mode.active {
-      background: rgba(14, 165, 233, 0.15);
-      border-color: var(--primary);
-      box-shadow: 0 0 15px var(--primary-glow);
-    }
-
-    .btn-mode:hover:not(.active) {
-      border-color: #475569;
-      background: #243147;
-    }
-
-    .btn-mode span {
-      font-size: 1.3rem;
-    }
-
-    .btn-mode div {
+    .volume-orb {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #e0f2fe 0%, #0ea5e9 100%);
+      box-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+      transition: transform 0.1s ease, filter 0.1s ease;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
     }
 
-    .btn-mode .mode-desc {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-muted);
+    .volume-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #0c4a6e;
     }
 
-    /* 灵敏度与阈值控制 */
-    .slider-container {
-      background: #111827;
-      padding: 15px;
+    .volume-lbl {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #0369a1;
+      text-transform: uppercase;
+    }
+
+    /* 装饰环 */
+    .visual-ring {
+      position: absolute;
+      border: 2px dashed rgba(56, 189, 248, 0.2);
+      border-radius: 50%;
+      width: 160px;
+      height: 160px;
+      animation: rotateRing 15s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes rotateRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 灵敏度控制 */
+    .control-panel {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 20px;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.03);
     }
 
     .slider-header {
@@ -218,12 +167,8 @@
       justify-content: space-between;
       font-size: 0.85rem;
       font-weight: 700;
+      color: #94a3b8;
       margin-bottom: 8px;
-    }
-
-    .slider-val {
-      font-family: 'Share Tech Mono', monospace;
-      color: var(--primary);
     }
 
     input[type="range"] {
@@ -236,1286 +181,227 @@
       cursor: pointer;
     }
 
-    .time-chips {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .time-chip {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-align: center;
-      transition: var(--transition);
-    }
-
-    .time-chip.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
-
-    .time-chip:hover:not(.active) {
-      background: #243147;
-    }
-
-    /* 中间核心游戏区 */
-    .game-zone {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 480px;
-    }
-
-    /* 魔法球与声波粒子渲染区 */
-    .canvas-container {
-      width: 100%;
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 280px;
-    }
-
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      border-radius: 20px;
-    }
-
-    /* 中心状态浮层 */
-    .magic-orb-ui {
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      pointer-events: none;
-    }
-
-    .timer-display {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: var(--text);
-      text-shadow: 0 0 20px rgba(255,255,255,0.2);
-      line-height: 1;
-      margin-bottom: 5px;
-    }
-
-    .orb-status-text {
-      font-size: 1rem;
-      font-weight: 800;
-      padding: 4px 16px;
-      border-radius: 50px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: var(--transition);
-      letter-spacing: 1px;
-    }
-
-    /* 分贝监测进度条 */
-    .db-meter-bar {
-      width: 100%;
-      background: #111827;
-      height: 24px;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-      border: 1.5px solid #1e293b;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-    }
-
-    .db-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--success) 0%, var(--warning) 60%, var(--error) 100%);
-      transition: width 0.1s ease;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-    }
-
-    /* 警戒红线 */
-    .db-threshold-line {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      width: 3px;
-      background: var(--error);
-      box-shadow: 0 0 8px var(--error);
-      z-index: 5;
-    }
-
-    .db-labels {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-top: 5px;
-    }
-
-    /* 启动按钮 */
-    .btn-action-group {
+    /* 操作按钮 */
+    .action-group {
       display: flex;
       gap: 15px;
       width: 100%;
-      margin-top: 15px;
-      z-index: 10;
     }
 
-    .btn-main {
-      flex: 1;
-      padding: 15px 30px;
+    .btn {
+      padding: 14px 28px;
       border-radius: 50px;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 800;
       cursor: pointer;
       border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: var(--shadow-sm);
       transition: var(--transition);
     }
 
     .btn-start {
+      flex: 1;
       background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
       color: white;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     }
 
     .btn-start:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
     }
 
     .btn-pause {
+      flex: 1;
       background: #334155;
       color: white;
-      border: 1px solid #475569;
-    }
-
-    .btn-pause:hover {
-      background: #475569;
     }
 
     .btn-reset {
       background: transparent;
       border: 1.5px solid #334155;
-      color: var(--text-muted);
-      width: 60px;
-      height: 52px;
-      border-radius: 50px;
+      color: #94a3b8;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: var(--transition);
+      font-size: 1.1rem;
     }
 
     .btn-reset:hover {
-      border-color: var(--error);
-      color: var(--error);
+      border-color: #ef4444;
+      color: #ef4444;
     }
 
-    /* 右侧信息与PK榜区 */
-    .scoreboard-area {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .score-banner {
-      background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      position: relative;
-    }
-
-    .score-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .score-value {
-      font-family: 'Fredoka', 'Share Tech Mono', sans-serif;
-      font-size: 3rem;
-      font-weight: 900;
-      color: #38bdf8;
-      text-shadow: 0 0 15px var(--primary-glow);
-    }
-
-    .streak-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    .streak-multiplier {
-      background: var(--success);
-      color: white;
-      font-family: 'Share Tech Mono', monospace;
-      padding: 2px 8px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      box-shadow: 0 0 8px var(--success-glow);
-    }
-
-    .streak-text {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--success);
-    }
-
-    /* 四组PK卡片 */
-    .teams-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .team-card {
-      background: #111827;
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      transition: var(--transition);
-    }
-
-    .team-card.active-turn {
-      border-color: var(--primary);
-      background: rgba(14, 165, 233, 0.08);
-      box-shadow: 0 0 10px var(--primary-glow);
-    }
-
-    .team-card.active-turn::before {
-      content: '⏳ 当前防守';
-      position: absolute;
-      top: -8px;
-      right: 15px;
-      background: var(--primary);
-      color: white;
-      font-size: 0.6rem;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-
-    .team-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .team-icon {
-      font-size: 1.5rem;
-    }
-
-    .team-name {
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
-    .team-score {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--success);
-    }
-
-    .team-bar-mini {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 3px;
-      background: var(--success);
-      width: 0%;
-      border-radius: 0 0 12px 12px;
-      transition: width 0.3s ease;
-    }
-
-    /* 游戏失败/成功遮罩弹窗 */
-    .overlay {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.9);
-      z-index: 100;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 30px;
-      animation: fadeIn 0.4s ease forwards;
-    }
-
-    .overlay-content {
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .overlay-icon {
-      font-size: 4rem;
-      animation: bounceIcon 1s infinite alternate;
-    }
-
-    @keyframes bounceIcon {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-10px); }
-    }
-
-    .overlay-title {
-      font-size: 1.6rem;
-      font-weight: 900;
-    }
-
-    .overlay-desc {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-    }
-
-    /* 魔法门传送门能量条 */
-    .portal-hp-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .portal-hp-bar {
-      width: 100%;
-      height: 10px;
-      background: #111827;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    .portal-hp-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
-      transition: width 0.3s ease;
-    }
-
-    /* 底部操作反馈与权限 */
-    .footer-note {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      border-top: 1px dashed rgba(56, 189, 248, 0.1);
-      padding-top: 15px;
-      margin-top: 10px;
+    .mic-tip {
+      font-size: 0.75rem;
+      color: #64748b;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- 头部区域 -->
-  <header>
-    <div class="logo-container">
-      <span class="logo-icon">🔮</span>
-      <div>
-        <h1>教室静音魔法阵</h1>
-        <p class="subtitle">培华小学三年级科学控班助手 · 越安静得分越高！</p>
-      </div>
+<div class="main-card">
+  <h1>🤫 课堂静音大挑战</h1>
+  
+  <!-- 音量状态球 -->
+  <div class="visualizer-container">
+    <div class="visual-ring"></div>
+    <div class="volume-orb" id="orb">
+      <span class="volume-value" id="vol-text">0</span>
+      <span class="volume-lbl">当前噪音</span>
     </div>
-    <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; color: var(--primary); font-weight: 700;">
-      SYSTEM LEVEL: ONLINE
-    </div>
-  </header>
-
-  <!-- 仪表盘区域 -->
-  <div class="dashboard">
-    
-    <!-- 左边栏：控制面板 -->
-    <div class="glass-panel">
-      <div class="panel-title">🛠️ 能量参数控制</div>
-      
-      <!-- 模式选择 -->
-      <div class="form-group">
-        <label>游戏挑战模式</label>
-        <div class="mode-select-btns">
-          <button type="button" class="btn-mode active" id="mode-coop" onclick="changeGameMode('coop')">
-            <span>🛡️</span>
-            <div>
-              <strong>全班合作守护模式</strong>
-              <span class="mode-desc">全班一起保持安静，给魔法球充能</span>
-            </div>
-          </button>
-          <button type="button" class="btn-mode" id="mode-teams" onclick="changeGameMode('teams')">
-            <span>⚔️</span>
-            <div>
-              <strong>四组静音PK模式</strong>
-              <span class="mode-desc">小组轮流守护，比拼谁更安静</span>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- 灵敏度标定 -->
-      <div class="form-group">
-        <div class="slider-container">
-          <div class="slider-header">
-            <span>🎤 麦克风输入放大 (倍数)</span>
-            <span class="slider-val" id="val-sensitivity">1.5x</span>
-          </div>
-          <input type="range" id="sensitivity" min="0.5" max="4.0" step="0.1" value="1.5" oninput="updateSensitivity(this.value)">
-        </div>
-      </div>
-
-      <!-- 警戒阈值设定 -->
-      <div class="form-group">
-        <div class="slider-container">
-          <div class="slider-header">
-            <span>🚨 触发警报噪音红线</span>
-            <span class="slider-val" id="val-threshold">35 %</span>
-          </div>
-          <input type="range" id="threshold" min="10" max="80" step="1" value="35" oninput="updateThreshold(this.value)">
-        </div>
-      </div>
-
-      <!-- 挑战时长 -->
-      <div class="form-group">
-        <label>挑战持续时间</label>
-        <div class="time-chips">
-          <div class="time-chip" data-time="30" onclick="selectTime(this)">30秒</div>
-          <div class="time-chip active" data-time="60" onclick="selectTime(this)">1分钟</div>
-          <div class="time-chip" data-time="180" onclick="selectTime(this)">3分钟</div>
-          <div class="time-chip" data-time="300" onclick="selectTime(this)">5分钟</div>
-        </div>
-      </div>
-
-      <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
-        <strong>💡 玩法说明：</strong><br>
-        1. 老师在麦克风灵敏度和警戒阈值设置好后，点击【开始运行】。<br>
-        2. 全班保持安静，声音维持在红线以下，就能获取积分并积攒连击奖励！<br>
-        3. 如果声音太大撞击红线，魔法球就会颤抖变红并扣除守护能量，甚至游戏失败！
-      </div>
-    </div>
-
-    <!-- 中间栏：主要渲染与物理区 -->
-    <div class="glass-panel game-zone" id="center-panel">
-      
-      <!-- 合作模式传送门能量条 -->
-      <div class="portal-hp-container" id="portal-hp-container">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700;">
-          <span>🔮 魔法传送门防御能量 (Portal Health)</span>
-          <span id="portal-hp-text" style="color: var(--primary);">100%</span>
-        </div>
-        <div class="portal-hp-bar">
-          <div class="portal-hp-fill" id="portal-hp-fill"></div>
-        </div>
-      </div>
-
-      <!-- 魔法球及粒子渲染画布 -->
-      <div class="canvas-container">
-        <canvas id="magicCanvas"></canvas>
-        
-        <!-- 中心核心 UI -->
-        <div class="magic-orb-ui">
-          <div class="timer-display" id="timer">01:00</div>
-          <div class="orb-status-text" id="orb-status">静止中</div>
-        </div>
-
-        <!-- 游戏失败/成功浮层 -->
-        <div class="overlay" id="overlay">
-          <div class="overlay-content">
-            <div class="overlay-icon" id="overlay-icon">💥</div>
-            <div class="overlay-title" id="overlay-title">魔法阵破裂！</div>
-            <div class="overlay-desc" id="overlay-desc">班级声音太大啦，魔法守护能量耗尽，挑战失败！</div>
-            <button type="button" class="btn-main btn-start" style="padding: 10px 24px; font-size: 0.95rem;" onclick="resetGame()">重新开始 🔄</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 分贝显示 -->
-      <div style="width: 100%;">
-        <div class="db-meter-bar">
-          <div class="db-fill" id="db-fill"></div>
-          <div class="db-threshold-line" id="db-line"></div>
-        </div>
-        <div class="db-labels">
-          <span>🤫 绝对静音 (0)</span>
-          <span style="color: var(--error);" id="line-label">警戒红线: 35%</span>
-          <span>📢 喧哗吵闹 (100)</span>
-        </div>
-      </div>
-
-      <!-- 启动按钮栏 -->
-      <div class="btn-action-group">
-        <button type="button" class="btn-main btn-start" id="btn-start" onclick="startGame()">
-          ▶ 开始运行
-        </button>
-        <button type="button" class="btn-main btn-pause" id="btn-pause" onclick="pauseGame()" style="display: none;">
-          ⏸ 暂停挑战
-        </button>
-        <button type="button" class="btn-reset" onclick="resetGame()" title="重置游戏">
-          🔄
-        </button>
-      </div>
-
-    </div>
-
-    <!-- 右侧栏：榜单与得分 -->
-    <div class="glass-panel scoreboard-area">
-      <div class="panel-title">🏆 荣誉积分看板</div>
-      
-      <!-- 积分卡 -->
-      <div class="score-banner">
-        <div class="score-label" id="score-label">全班合作积分</div>
-        <div class="score-value" id="current-score">0</div>
-        
-        <!-- 连击加成 -->
-        <div class="streak-container" id="streak-box">
-          <span class="streak-multiplier" id="streak-mult">1x</span>
-          <span class="streak-text" id="streak-desc">静音连击 +0</span>
-        </div>
-      </div>
-
-      <!-- 积分排行榜 (PK模式用) -->
-      <div class="panel-title" id="ranking-title" style="margin-top: 10px;">👥 小分队荣誉榜</div>
-      
-      <div class="teams-container" id="teams-list">
-        <!-- 猛虎队 -->
-        <div class="team-card" id="team-tiger">
-          <div class="team-info">
-            <span class="team-icon">🐯</span>
-            <span class="team-name">猛虎队 (Group 1)</span>
-          </div>
-          <div class="team-score" id="score-tiger">0</div>
-          <div class="team-bar-mini" id="bar-tiger"></div>
-        </div>
-        <!-- 飞鹰队 -->
-        <div class="team-card" id="team-eagle">
-          <div class="team-info">
-            <span class="team-icon">🦅</span>
-            <span class="team-name">飞鹰队 (Group 2)</span>
-          </div>
-          <div class="team-score" id="score-eagle">0</div>
-          <div class="team-bar-mini" id="bar-eagle"></div>
-        </div>
-        <!-- 海豚队 -->
-        <div class="team-card" id="team-dolphin">
-          <div class="team-info">
-            <span class="team-icon">🐬</span>
-            <span class="team-name">海豚队 (Group 3)</span>
-          </div>
-          <div class="team-score" id="score-dolphin">0</div>
-          <div class="team-bar-mini" id="bar-dolphin"></div>
-        </div>
-        <!-- 熊猫队 -->
-        <div class="team-card" id="team-panda">
-          <div class="team-info">
-            <span class="team-icon">🐼</span>
-            <span class="team-name">熊猫队 (Group 4)</span>
-          </div>
-          <div class="team-score" id="score-panda">0</div>
-          <div class="team-bar-mini" id="bar-panda"></div>
-        </div>
-      </div>
-
-      <div class="footer-note">
-        使用前请授权浏览器使用您的麦克风 🎙️<br>
-        声音数据在本地进行处理，绝不上传。
-      </div>
-
-    </div>
-
   </div>
 
+  <!-- 分数板块 -->
+  <div class="score-container">
+    <div class="score-label">累计挑战得分</div>
+    <div class="score-value" id="score-text">0</div>
+    <div class="points-speed" id="speed-text">保持安静获取积分</div>
+  </div>
+
+  <!-- 控制板块 -->
+  <div class="control-panel">
+    <div class="slider-header">
+      <span>🎤 麦克风灵敏度校准</span>
+      <span style="color: var(--primary);" id="sensitivity-val">1.5x</span>
+    </div>
+    <input type="range" id="sensitivity" min="0.5" max="4.0" step="0.1" value="1.5" oninput="changeSensitivity(this.value)">
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="action-group">
+    <button class="btn btn-start" id="btn-action" onclick="togglePlay()">▶ 开始运行</button>
+    <button class="btn-reset" onclick="resetGame()" title="重置分数">🔄</button>
+  </div>
+
+  <div class="mic-tip">请在提示时允许使用麦克风权限 · 声音完全本地处理</div>
 </div>
 
-<!-- ==========================================
-     核心监测逻辑与渲染代码 (Javascript)
-     ========================================== -->
 <script>
-  /* ==========================================
-     全局变量定义
-     ========================================== */
-  let gameMode = 'coop'; // 'coop' (合作) 或 'teams' (小组PK)
   let isRunning = false;
-  let micSensitivity = 1.5;
-  let noiseThreshold = 35;
-  let durationSeconds = 60; // 默认1分钟
-  let timeLeft = 60;
+  let score = 0;
+  let sensitivity = 1.5;
   
-  // 成绩相关
-  let currentScore = 0;
-  let streakCount = 0;
-  let streakMultiplier = 1;
-  let portalHp = 100;
-  let streakPointsAccrued = 0;
-
-  // 小组PK数据
-  const teams = [
-    { id: 'tiger', name: '猛虎队', score: 0 },
-    { id: 'eagle', name: '飞鹰队', score: 0 },
-    { id: 'dolphin', name: '海豚队', score: 0 },
-    { id: 'panda', name: '熊猫队', score: 0 }
-  ];
-  let currentTeamTurnIndex = 0; // 当前防守的小组索引
-  let teamTurnTimerSeconds = 15; // 轮流时间，一般默认15-30秒
-  let teamTimeLeft = 15;
-
-  // 音效合成与麦克风 API
   let audioCtx = null;
   let micStream = null;
-  let analyserNode = null;
+  let analyser = null;
   let dataArray = null;
-  let soundEnabled = true;
+  let gameInterval = null;
 
-  // 循环计时器
-  let gameTimer = null;
-  let micMonitorLoop = null;
-
-  // 画布与微粒子系统
-  let canvas = null;
-  let ctx = null;
-  let particles = [];
-  const maxParticles = 60;
-
-  /* ==========================================
-     初始化
-     ========================================== */
-  window.onload = () => {
-    initCanvas();
-    updateThresholdDisplay(35);
-    updateSensitivityDisplay(1.5);
-    resetGame();
-  };
-
-  // 初始化微粒子
-  function initCanvas() {
-    canvas = document.getElementById('magicCanvas');
-    ctx = canvas.getContext('2d');
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // 粒子构造
-    for (let i = 0; i < maxParticles; i++) {
-      particles.push({
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        angle: Math.random() * Math.PI * 2,
-        distance: 70 + Math.random() * 40,
-        speed: 0.01 + Math.random() * 0.02,
-        size: 2 + Math.random() * 4,
-        color: 'rgba(56, 189, 248, 0.6)'
-      });
-    }
-    requestAnimationFrame(renderParticles);
-  }
-
-  function resizeCanvas() {
-    const rect = canvas.parentNode.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-  }
-
-  /* ==========================================
-     麦克风输入与声音处理
-     ========================================== */
-  async function setupMic() {
-    if (audioCtx) return true; // 已经建好了
-    
+  async function initAudio() {
+    if (audioCtx) return true;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       micStream = stream;
-
-      const sourceNode = audioCtx.createMediaStreamSource(stream);
-      analyserNode = audioCtx.createAnalyser();
-      analyserNode.fftSize = 128; // 小采样率提高响应速度
       
-      const bufferLength = analyserNode.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLength);
-
-      sourceNode.connect(analyserNode);
+      const source = audioCtx.createMediaStreamSource(stream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      source.connect(analyser);
       return true;
     } catch (err) {
-      console.error("Microphone access denied: ", err);
-      alert("无法访问麦克风。请检查浏览器麦克风权限！");
+      alert("无法启用麦克风，请检查浏览器权限权限！");
       return false;
     }
   }
 
-  function stopMic() {
-    if (micStream) {
-      micStream.getTracks().forEach(track => track.stop());
-      micStream = null;
-    }
-    if (audioCtx) {
-      audioCtx.close();
-      audioCtx = null;
-    }
-    analyserNode = null;
+  function changeSensitivity(val) {
+    sensitivity = parseFloat(val);
+    document.getElementById('sensitivity-val').textContent = `${sensitivity.toFixed(1)}x`;
   }
 
-  // 灵敏度与阈值修改
-  function updateSensitivity(val) {
-    micSensitivity = parseFloat(val);
-    document.getElementById('val-sensitivity').textContent = `${micSensitivity.toFixed(1)}x`;
-  }
-
-  function updateThreshold(val) {
-    noiseThreshold = parseInt(val);
-    updateThresholdDisplay(noiseThreshold);
-  }
-
-  function updateThresholdDisplay(val) {
-    document.getElementById('val-threshold').textContent = `${val} %`;
-    document.getElementById('db-line').style.left = `${val}%`;
-    document.getElementById('line-label').textContent = `警戒红线: ${val}%`;
-  }
-
-  function updateSensitivityDisplay(val) {
-    document.getElementById('val-sensitivity').textContent = `${parseFloat(val).toFixed(1)}x`;
-  }
-
-  /* ==========================================
-     Web Audio 音效合成器
-     ========================================== */
-  function playSynthSound(freq, type = 'sine', duration = 0.2, gainVal = 0.08) {
-    if (!soundEnabled || !audioCtx) return;
-    try {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
+  async function togglePlay() {
+    const btn = document.getElementById('btn-action');
+    
+    if (!isRunning) {
+      const active = await initAudio();
+      if (!active) return;
       
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      isRunning = true;
+      btn.textContent = "⏸ 暂停挑战";
+      btn.className = "btn btn-pause";
       
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    } catch (e) {
-      console.warn(e);
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      // 每 100ms 采样一次并更新得分
+      gameInterval = setInterval(updateFrame, 100);
+    } else {
+      isRunning = false;
+      btn.textContent = "▶ 开始运行";
+      btn.className = "btn btn-start";
+      clearInterval(gameInterval);
     }
   }
 
-  function playWarnBuzzer() {
-    playSynthSound(180, 'sawtooth', 0.35, 0.12);
-  }
-
-  function playLevelUpChime() {
-    playSynthSound(523.25, 'sine', 0.15, 0.05); // C5
-    setTimeout(() => playSynthSound(659.25, 'sine', 0.15, 0.05), 80); // E5
-    setTimeout(() => playSynthSound(783.99, 'sine', 0.25, 0.05), 160); // G5
-  }
-
-  function playSuccessTriumph() {
-    playSynthSound(523.25, 'sine', 0.2, 0.08);
-    setTimeout(() => playSynthSound(659.25, 'sine', 0.2, 0.08), 120);
-    setTimeout(() => playSynthSound(783.99, 'sine', 0.2, 0.08), 240);
-    setTimeout(() => playSynthSound(1046.50, 'sine', 0.4, 0.1), 360); // C6
-  }
-
-  function toggleSound() {
-    soundEnabled = !soundEnabled;
-    const btn = document.getElementById('btn-sound');
-    btn.innerHTML = soundEnabled ? '🔊' : '🔇';
-    playSynthSound(400, 'sine', 0.08);
-  }
-
-  /* ==========================================
-     时间控制与选择
-     ========================================== */
-  function selectTime(el) {
-    if (isRunning) return; // 运行中不可修改时间
-    document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
+  function updateFrame() {
+    if (!isRunning || !analyser) return;
     
-    durationSeconds = parseInt(el.getAttribute('data-time'));
-    timeLeft = durationSeconds;
-    updateTimerDisplay();
-    playSynthSound(450, 'sine', 0.05);
-  }
-
-  function updateTimerDisplay() {
-    const mins = Math.floor(timeLeft / 60);
-    const secs = timeLeft % 60;
-    document.getElementById('timer').textContent = 
-      `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
-
-  /* ==========================================
-     核心监测循环 (Tick-Tock)
-     ========================================== */
-  function monitorMicInput() {
-    if (!isRunning || !analyserNode) return;
-    
-    analyserNode.getByteFrequencyData(dataArray);
-    
-    // 计算瞬时频域振幅均值作为音量值
+    analyser.getByteFrequencyData(dataArray);
     let sum = 0;
     for (let i = 0; i < dataArray.length; i++) {
       sum += dataArray[i];
     }
     let rawAvg = sum / dataArray.length;
     
-    // 乘上灵敏度，缩放到 0 - 100
-    let currentVolume = Math.min(100, Math.round(rawAvg * micSensitivity));
+    // 缩放到 0 - 100 噪音等级
+    let volume = Math.min(100, Math.round(rawAvg * sensitivity));
     
-    // 更新音量进度条
-    const dbFill = document.getElementById('db-fill');
-    dbFill.style.width = `${currentVolume}%`;
+    // 越安静加分越多（绝对安静0分贝，秒加10分；极其吵闹100分贝，秒加0分）
+    // 每次周期 100ms，所以分值乘以 0.1
+    let addedPoints = Math.max(0, (100 - volume) / 10);
+    score += addedPoints;
     
-    // 检查是否吵闹（超出阈值）
-    const isLoud = currentVolume >= noiseThreshold;
+    // 渲染 UI 状态
+    document.getElementById('vol-text').textContent = volume;
+    document.getElementById('score-text').textContent = Math.round(score);
     
-    // 影响画布魔法球状态
-    if (isLoud) {
-      dbFill.style.background = 'var(--error)';
-      dbFill.style.boxShadow = '0 0 15px var(--error-glow)';
-      triggerVolumeThresholdExceeded();
+    const speedText = document.getElementById('speed-text');
+    if (volume < 15) {
+      speedText.textContent = `🍀 极度安静！秒加 +10 分`;
+      speedText.style.color = "#10b981";
+    } else if (volume < 40) {
+      speedText.textContent = `👍 较安静中，秒加 +${Math.round((100 - volume)/10)} 分`;
+      speedText.style.color = "#34d399";
     } else {
-      dbFill.style.background = 'linear-gradient(90deg, var(--success) 0%, var(--warning) 60%, var(--error) 100%)';
-      dbFill.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.3)';
+      speedText.textContent = `⚠️ 太吵啦！得分极慢 (秒加 +${Math.round((100 - volume)/10)} 分)`;
+      speedText.style.color = "#f87171";
     }
 
-    // 每 100ms 刷新一次分贝进度
-    setTimeout(monitorMicInput, 100);
-  }
-
-  // 声音越界惩罚
-  let lastLoudTime = 0;
-  function triggerVolumeThresholdExceeded() {
-    const now = Date.now();
+    // 缩放并改变发光球体的发光强度与大小
+    const orb = document.getElementById('orb');
+    const scale = 1 + (volume / 200); // 噪音大则球体变大
+    orb.style.transform = `scale(${scale})`;
     
-    // 限制警报音效播放频率，防止过于刺耳（最少间隔1.2秒）
-    if (now - lastLoudTime > 1200) {
-      playWarnBuzzer();
-      lastLoudTime = now;
-    }
-    
-    // 扣积分与重置连击
-    if (gameMode === 'coop') {
-      portalHp = Math.max(0, portalHp - 6); // 能量扣6%
-      document.getElementById('portal-hp-fill').style.width = `${portalHp}%`;
-      document.getElementById('portal-hp-text').textContent = `${portalHp}%`;
-      document.getElementById('portal-hp-text').style.color = 'var(--error)';
-      
-      if (portalHp <= 0) {
-        endGame(false); // 守护失败！
-        return;
-      }
-    }
-    
-    // 重置积分连击乘数
-    streakCount = 0;
-    streakMultiplier = 1;
-    document.getElementById('streak-mult').textContent = '1x';
-    document.getElementById('streak-mult').style.background = 'var(--text-muted)';
-    document.getElementById('streak-desc').textContent = '静音连击断开！ 💥';
-    document.getElementById('streak-desc').style.color = 'var(--error)';
-  }
-
-  /* ==========================================
-     每秒游戏状态更新（Score & Timer Tick）
-     ========================================== */
-  function gameTick() {
-    if (!isRunning) return;
-    
-    timeLeft--;
-    updateTimerDisplay();
-
-    // 计算即时声音状况以增加分数
-    analyserNode.getByteFrequencyData(dataArray);
-    let sum = 0;
-    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-    let vol = (sum / dataArray.length) * micSensitivity;
-    
-    if (vol < noiseThreshold) {
-      // 保持安静加分
-      streakCount++;
-      
-      // 连击奖励乘数
-      if (streakCount >= 25) {
-        streakMultiplier = 5;
-        document.getElementById('streak-mult').style.background = 'var(--warning)';
-      } else if (streakCount >= 12) {
-        streakMultiplier = 3;
-        document.getElementById('streak-mult').style.background = 'var(--primary)';
-      } else if (streakCount >= 5) {
-        streakMultiplier = 2;
-        document.getElementById('streak-mult').style.background = 'var(--success)';
-      } else {
-        streakMultiplier = 1;
-        document.getElementById('streak-mult').style.background = 'var(--text-muted)';
-      }
-      
-      document.getElementById('streak-mult').textContent = `${streakMultiplier}x`;
-      
-      // 增加积分
-      let addedPoints = 10 * streakMultiplier;
-      currentScore += addedPoints;
-      
-      document.getElementById('current-score').textContent = currentScore;
-      document.getElementById('streak-desc').textContent = `静音连击 +${addedPoints}`;
-      document.getElementById('streak-desc').style.color = 'var(--success)';
-      
-      // 合作守护能量缓慢恢复
-      if (gameMode === 'coop' && portalHp < 100) {
-        portalHp = Math.min(100, portalHp + 2);
-        document.getElementById('portal-hp-fill').style.width = `${portalHp}%`;
-        document.getElementById('portal-hp-text').textContent = `${portalHp}%`;
-        document.getElementById('portal-hp-text').style.color = 'var(--success)';
-      }
-
-      // 如果是小组PK模式，当前防守的小组加分
-      if (gameMode === 'teams') {
-        const currentTeam = teams[currentTeamTurnIndex];
-        currentTeam.score += addedPoints;
-        document.getElementById(`score-${currentTeam.id}`).textContent = currentTeam.score;
-      }
-
-      // 连击升级音效
-      if (streakCount === 5 || streakCount === 12 || streakCount === 25) {
-        playLevelUpChime();
-      }
-    }
-
-    // 小组PK模式的轮转控制
-    if (gameMode === 'teams') {
-      teamTimeLeft--;
-      // 更新当前队伍的进度条
-      const currentTeam = teams[currentTeamTurnIndex];
-      const percent = (teamTimeLeft / teamTurnTimerSeconds) * 100;
-      document.getElementById(`bar-${currentTeam.id}`).style.width = `${percent}%`;
-
-      if (teamTimeLeft <= 0) {
-        // 时间到，切换至下一组
-        document.getElementById(`bar-${currentTeam.id}`).style.width = `0%`;
-        rotateTeamTurn();
-      }
-    }
-
-    // 挑战倒计时结束判定
-    if (timeLeft <= 0) {
-      endGame(true); // 挑战成功！
+    if (volume > 40) {
+      // 吵闹红光
+      orb.style.background = 'radial-gradient(circle, #fecaca 0%, #ef4444 100%)';
+      orb.style.boxShadow = `0 0 ${20 + volume}px rgba(239, 68, 68, 0.6)`;
     } else {
-      gameTimer = setTimeout(gameTick, 1000);
+      // 安静蓝绿光
+      orb.style.background = 'radial-gradient(circle, #e0fdf4 0%, #10b981 100%)';
+      orb.style.boxShadow = `0 0 ${20 + (40 - volume)}px rgba(16, 185, 129, 0.4)`;
     }
-  }
-
-  // PK模式轮换队伍
-  function rotateTeamTurn() {
-    // 清理上一支队伍的高亮
-    const lastTeamId = teams[currentTeamTurnIndex].id;
-    document.getElementById(`team-${lastTeamId}`).classList.remove('active-turn');
-    
-    // 切换下一个
-    currentTeamTurnIndex = (currentTeamTurnIndex + 1) % teams.length;
-    
-    const newTeam = teams[currentTeamTurnIndex];
-    document.getElementById(`team-${newTeam.id}`).classList.add('active-turn');
-    
-    // 播报提示音并重新计时
-    playLevelUpChime();
-    teamTimeLeft = teamTurnTimerSeconds;
-    
-    // 改变球的状态展示
-    document.getElementById('orb-status').textContent = `${newTeam.name} 防守中`;
-    document.getElementById('orb-status').style.color = 'var(--primary)';
-  }
-
-  /* ==========================================
-     开始、暂停、重置与结束
-     ========================================== */
-  async function startGame() {
-    const success = await setupMic();
-    if (!success) return;
-
-    isRunning = true;
-    document.getElementById('btn-start').style.display = 'none';
-    document.getElementById('btn-pause').style.display = 'block';
-    
-    // 锁定参数输入
-    document.getElementById('sensitivity').disabled = true;
-    document.getElementById('threshold').disabled = true;
-
-    // 恢复 AudioContext
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-
-    // 播放启动提示音
-    playSynthSound(600, 'sine', 0.2);
-    setTimeout(() => playSynthSound(800, 'sine', 0.35), 100);
-
-    // 启动状态与文本更新
-    if (gameMode === 'coop') {
-      document.getElementById('orb-status').textContent = '守护法阵中...';
-      document.getElementById('orb-status').style.color = 'var(--success)';
-    } else {
-      const activeTeam = teams[currentTeamTurnIndex];
-      document.getElementById(`team-${activeTeam.id}`).classList.add('active-turn');
-      document.getElementById('orb-status').textContent = `${activeTeam.name} 防守中`;
-      document.getElementById('orb-status').style.color = 'var(--primary)';
-    }
-
-    // 触发循环监测
-    monitorMicInput();
-    gameTimer = setTimeout(gameTick, 1000);
-  }
-
-  function pauseGame() {
-    isRunning = false;
-    document.getElementById('btn-pause').style.display = 'none';
-    document.getElementById('btn-start').style.display = 'block';
-    document.getElementById('orb-status').textContent = '已暂停挑战';
-    document.getElementById('orb-status').style.color = 'var(--warning)';
-    
-    clearTimeout(gameTimer);
-    playSynthSound(400, 'sine', 0.2);
   }
 
   function resetGame() {
-    isRunning = false;
-    clearTimeout(gameTimer);
-    stopMic();
+    score = 0;
+    document.getElementById('score-text').textContent = "0";
+    document.getElementById('vol-text').textContent = "0";
+    document.getElementById('speed-text').textContent = "保持安静获取积分";
+    document.getElementById('speed-text').style.color = "#94a3b8";
     
-    // 恢复参数编辑
-    document.getElementById('sensitivity').disabled = false;
-    document.getElementById('threshold').disabled = false;
-
-    // 还原数值与 UI
-    timeLeft = durationSeconds;
-    currentScore = 0;
-    streakCount = 0;
-    streakMultiplier = 1;
-    portalHp = 100;
-    currentTeamTurnIndex = 0;
-    teamTimeLeft = teamTurnTimerSeconds;
-
-    // 重置小队积分
-    teams.forEach(t => {
-      t.score = 0;
-      document.getElementById(`score-${t.id}`).textContent = '0';
-      document.getElementById(`bar-${t.id}`).style.width = '0%';
-      document.getElementById(`team-${t.id}`).classList.remove('active-turn');
-    });
-
-    document.getElementById('btn-pause').style.display = 'none';
-    document.getElementById('btn-start').style.display = 'block';
+    const orb = document.getElementById('orb');
+    orb.style.transform = "scale(1)";
+    orb.style.background = 'radial-gradient(circle, #e0f2fe 0%, #0ea5e9 100%)';
+    orb.style.boxShadow = "0 0 30px rgba(14, 165, 233, 0.3)";
     
-    document.getElementById('current-score').textContent = '0';
-    document.getElementById('streak-mult').textContent = '1x';
-    document.getElementById('streak-mult').style.background = 'var(--text-muted)';
-    document.getElementById('streak-desc').textContent = '静音连击准备 🤫';
-    document.getElementById('streak-desc').style.color = 'var(--text-muted)';
-    
-    document.getElementById('portal-hp-fill').style.width = '100%';
-    document.getElementById('portal-hp-text').textContent = '100%';
-    document.getElementById('portal-hp-text').style.color = 'var(--success)';
-    
-    document.getElementById('orb-status').textContent = '静止中';
-    document.getElementById('orb-status').style.color = 'var(--text-muted)';
-    
-    document.getElementById('db-fill').style.width = '0%';
-    document.getElementById('overlay').style.display = 'none';
-    
-    updateTimerDisplay();
-  }
-
-  function endGame(isSuccess) {
-    isRunning = false;
-    clearTimeout(gameTimer);
-    stopMic();
-    
-    const overlay = document.getElementById('overlay');
-    const overlayIcon = document.getElementById('overlay-icon');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayDesc = document.getElementById('overlay-desc');
-    
-    overlay.style.display = 'flex';
-    
-    if (isSuccess) {
-      playSuccessTriumph();
-      overlayIcon.textContent = '🏆';
-      overlayTitle.textContent = '挑战成功！';
-      overlayTitle.style.color = 'var(--success)';
-      
-      if (gameMode === 'coop') {
-        overlayDesc.textContent = `太棒了！全班成功守卫魔法传送门，斩获 ${currentScore} 分！`;
-      } else {
-        // 算出优胜队
-        let winner = teams[0];
-        teams.forEach(t => { if (t.score > winner.score) winner = t; });
-        overlayDesc.textContent = `挑战结束！${winner.name} 表现最为安静，成为本次静音大挑战冠军 👑！`;
-      }
-    } else {
-      // 合作失败
-      playFailureSound();
-      overlayIcon.textContent = '💥';
-      overlayTitle.textContent = '魔法阵碎裂！';
-      overlayTitle.style.color = 'var(--error)';
-      overlayDesc.textContent = `班级声音太大啦，魔法守护能量耗尽，挑战失败！请再次挑战。`;
+    if (isRunning) {
+      togglePlay(); // 暂停
     }
-  }
-
-  // 切换模式
-  function changeGameMode(mode) {
-    if (isRunning) return; // 运行中不能换模式
-    
-    gameMode = mode;
-    playSynthSound(500, 'sine', 0.1);
-    
-    const cBtn = document.getElementById('mode-coop');
-    const tBtn = document.getElementById('mode-teams');
-    const hPanel = document.getElementById('portal-hp-container');
-    const sLabel = document.getElementById('score-label');
-    
-    if (mode === 'coop') {
-      cBtn.classList.add('active');
-      tBtn.classList.remove('active');
-      hPanel.style.display = 'flex';
-      sLabel.textContent = '全班合作积分';
-    } else {
-      tBtn.classList.add('active');
-      cBtn.classList.remove('active');
-      hPanel.style.display = 'none';
-      sLabel.textContent = '当前小队得分';
-    }
-    resetGame();
-  }
-
-  /* ==========================================
-     粒子系统渲染动画 (Canvas Animation)
-     ========================================== */
-  function renderParticles() {
-    if (!canvas || !ctx) return;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // 获取当前的分贝输入振幅
-    let currentVolRatio = 0;
-    if (analyserNode && isRunning) {
-      analyserNode.getByteFrequencyData(dataArray);
-      let sum = 0;
-      for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-      currentVolRatio = (sum / dataArray.length) * micSensitivity / 100;
-    }
-    
-    // 计算警戒判断
-    const isAlert = currentVolRatio * 100 >= noiseThreshold;
-    
-    // 渲染中心魔法阵底图
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const baseRadius = 60 + currentVolRatio * 40; // 魔法球随声音胀大
-    
-    // 绘制外部的旋转圆环
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, baseRadius + 15, 0, Math.PI * 2);
-    ctx.strokeStyle = isAlert ? 'rgba(239, 68, 68, 0.15)' : 'rgba(14, 165, 233, 0.15)';
-    ctx.lineWidth = 4;
-    ctx.setLineDash([10, 15]);
-    // 让圆环微微自转
-    ctx.translate(centerX, centerY);
-    ctx.rotate((isAlert ? Date.now() / 150 : Date.now() / 800) % (Math.PI * 2));
-    ctx.translate(-centerX, -centerY);
-    ctx.stroke();
-    ctx.restore();
-    
-    // 绘制发光的中心球
-    const glowGrad = ctx.createRadialGradient(
-      centerX, centerY, 5, 
-      centerX, centerY, baseRadius
-    );
-    
-    if (!isRunning) {
-      glowGrad.addColorStop(0, '#334155');
-      glowGrad.addColorStop(0.5, '#1e293b');
-      glowGrad.addColorStop(1, 'transparent');
-    } else if (isAlert) {
-      // 警报红光
-      glowGrad.addColorStop(0, '#fca5a5');
-      glowGrad.addColorStop(0.3, '#ef4444');
-      glowGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.2)');
-      glowGrad.addColorStop(1, 'transparent');
-      
-      // 镜头抖动效果
-      if (Math.random() > 0.5) {
-        ctx.translate(Math.random()*6-3, Math.random()*6-3);
-      }
-    } else {
-      // 安静蓝光
-      glowGrad.addColorStop(0, '#e0f2fe');
-      glowGrad.addColorStop(0.2, '#38bdf8');
-      glowGrad.addColorStop(0.6, 'rgba(14, 165, 233, 0.25)');
-      glowGrad.addColorStop(1, 'transparent');
-    }
-    
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, baseRadius, 0, Math.PI * 2);
-    ctx.fillStyle = glowGrad;
-    ctx.fill();
-    
-    // 绘制粒子
-    particles.forEach(p => {
-      // 自转
-      p.angle += isAlert ? p.speed * 4 : p.speed; // 吵闹时转得快
-      
-      // 声音大时粒子向外飞散，安静时聚拢在魔法阵边缘
-      let targetDist = isAlert ? p.distance * 1.8 : p.distance;
-      p.distance += (targetDist - p.distance) * 0.1;
-      
-      const px = centerX + Math.cos(p.angle) * p.distance;
-      const py = centerY + Math.sin(p.angle) * p.distance;
-      
-      ctx.beginPath();
-      ctx.arc(px, py, isAlert ? p.size * 1.5 : p.size, 0, Math.PI * 2);
-      
-      if (isAlert) {
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
-      } else {
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
-      }
-      ctx.fill();
-    });
-    
-    requestAnimationFrame(renderParticles);
   }
 </script>
 
