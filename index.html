@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>静音挑战 · 越安静得分越高</title>
+  <title>静音挑战 · 保护熊猫宝宝的美梦</title>
   
   <!-- 引入优质字体 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,12 +12,13 @@
   
   <style>
     :root {
-      --bg: #0b0f19;
-      --card-bg: rgba(17, 24, 39, 0.7);
+      --bg-day: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+      --bg-forest: #090d16;
       --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.4);
-      --success: #10b981;
       --text: #f1f5f9;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -29,7 +30,7 @@
 
     body {
       font-family: 'Noto Sans SC', system-ui, sans-serif;
-      background: radial-gradient(circle at center, #111827 0%, var(--bg) 100%);
+      background: var(--bg-forest);
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -37,138 +38,290 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      overflow: hidden;
     }
 
-    .main-card {
-      background: var(--card-bg);
-      border: 1px solid rgba(56, 189, 248, 0.15);
-      border-radius: 32px;
-      padding: 40px;
+    /* 森林繁星背景 */
+    .forest-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 500px;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, #1e1e38 0%, #07070f 80%);
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* 动态繁星 */
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.3;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .star.glow {
+      opacity: 1;
+      box-shadow: 0 0 8px #fff, 0 0 15px #fef08a;
+      background: #fef08a;
+      transform: scale(1.5);
+    }
+
+    /* 主界面卡片 */
+    .game-card {
+      position: relative;
+      z-index: 10;
+      background: rgba(15, 23, 42, 0.75);
+      border: 2px solid rgba(56, 189, 248, 0.15);
+      border-radius: 36px;
+      padding: 30px;
+      width: 100%;
+      max-width: 480px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
+      gap: 20px;
     }
 
     h1 {
       font-size: 1.8rem;
       font-weight: 900;
-      letter-spacing: 1px;
       background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
     }
 
-    /* 积分展示 */
-    .score-container {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 20px;
-      padding: 20px 40px;
+    /* 实验区/小熊猫渲染容器 */
+    .panda-stage {
       width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .score-label {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 5px;
-    }
-
-    .score-value {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 4.5rem;
-      font-weight: 900;
-      color: var(--primary);
-      text-shadow: 0 0 20px var(--primary-glow);
-      line-height: 1;
-    }
-
-    .points-speed {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--success);
-      margin-top: 8px;
-      height: 20px;
-    }
-
-    /* 发光音量球 */
-    .visualizer-container {
-      width: 180px;
-      height: 180px;
+      height: 240px;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .volume-orb {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #e0f2fe 0%, #0ea5e9 100%);
-      box-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
-      transition: transform 0.1s ease, filter 0.1s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
+    /* SVG小熊猫角色样式 */
+    .panda-svg {
+      width: 220px;
+      height: 220px;
+      transition: var(--transition);
     }
 
-    .volume-value {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #0c4a6e;
+    /* 小熊猫动画节点 */
+    .panda-ear {
+      transition: transform 0.1s ease;
+      transform-origin: center bottom;
     }
 
-    .volume-lbl {
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: #0369a1;
-      text-transform: uppercase;
+    .panda-ear-left { transform-origin: 65px 75px; }
+    .panda-ear-right { transform-origin: 155px 75px; }
+
+    /* 耳朵颤抖（吵闹时） */
+    .shake-ears {
+      animation: shakeEar 0.15s infinite alternate;
     }
 
-    /* 装饰环 */
-    .visual-ring {
+    @keyframes shakeEar {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
+
+    .panda-eye-sleep {
+      transition: opacity 0.2s ease;
+      opacity: 1;
+    }
+
+    .panda-eye-awake {
+      transition: opacity 0.2s ease;
+      opacity: 0;
+    }
+
+    /* 捂耳朵的双手 */
+    .panda-hand {
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .panda-hand-left { transform-origin: 60px 170px; }
+    .panda-hand-right { transform-origin: 160px 170px; }
+
+    /* 捂耳朵状态 */
+    .cover-ears-left { transform: translate(15px, -35px) rotate(45deg); }
+    .cover-ears-right { transform: translate(-15px, -35px) rotate(-45deg); }
+
+    /* 飘浮的 Zzz 泡泡 */
+    .zzz-bubble {
       position: absolute;
-      border: 2px dashed rgba(56, 189, 248, 0.2);
-      border-radius: 50%;
-      width: 160px;
-      height: 160px;
-      animation: rotateRing 15s linear infinite;
-      z-index: 1;
+      color: #7dd3fc;
+      font-weight: 900;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      pointer-events: none;
+      animation: floatZzz 3s linear forwards;
+      opacity: 0;
+      text-shadow: 0 0 5px rgba(56, 189, 248, 0.5);
     }
 
-    @keyframes rotateRing {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    @keyframes floatZzz {
+      0% {
+        transform: translate(10px, -20px) scale(0.6);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.8;
+      }
+      50% {
+        transform: translate(-15px, -70px) scale(1);
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(20px, -150px) scale(1.3);
+        opacity: 0;
+      }
     }
 
-    /* 灵敏度控制 */
-    .control-panel {
+    /* 收集到的星星动画 */
+    .floating-star-feedback {
+      position: absolute;
+      font-size: 1.5rem;
+      color: #fef08a;
+      pointer-events: none;
+      z-index: 100;
+      animation: floatStarToBank 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    @keyframes floatStarToBank {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0.5);
+        opacity: 0.2;
+      }
+    }
+
+    /* 警示叹号 */
+    .alert-symbol {
+      position: absolute;
+      top: 10px;
+      font-size: 3rem;
+      color: var(--error);
+      font-weight: 900;
+      text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: var(--transition);
+      pointer-events: none;
+    }
+
+    .alert-symbol.show {
+      opacity: 1;
+      transform: scale(1);
+      animation: heartBeat 0.5s infinite alternate;
+    }
+
+    @keyframes heartBeat {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.15); }
+    }
+
+    /* 状态提示语 */
+    .status-banner {
+      font-size: 1.15rem;
+      font-weight: 900;
+      padding: 6px 20px;
+      border-radius: 50px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: var(--transition);
+    }
+
+    /* 分数看板 */
+    .score-bank {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 24px;
+      padding: 15px 30px;
       width: 100%;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 20px;
-      border-radius: 16px;
+      border: 1.5px solid rgba(56, 189, 248, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .bank-label {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bank-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #fef08a;
+      text-shadow: 0 0 15px rgba(254, 240, 138, 0.3);
+      line-height: 1;
+    }
+
+    /* 噪音进度条 */
+    .noise-container {
+      width: 100%;
+      text-align: left;
+    }
+
+    .bar-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #64748b;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .noise-meter {
+      width: 100%;
+      height: 18px;
+      background: #111827;
+      border-radius: 50px;
+      overflow: hidden;
+      border: 1.5px solid #1e293b;
+    }
+
+    .noise-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--success) 0%, var(--warning) 70%, var(--error) 100%);
+      transition: width 0.1s ease;
+    }
+
+    /* 灵敏度与设置 */
+    .settings-panel {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 18px;
+      padding: 15px;
       border: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    .slider-header {
+    .settings-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.8rem;
+      font-weight: 800;
       color: #94a3b8;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     input[type="range"] {
@@ -181,8 +334,8 @@
       cursor: pointer;
     }
 
-    /* 操作按钮 */
-    .action-group {
+    /* 控制按钮 */
+    .action-row {
       display: flex;
       gap: 15px;
       width: 100%;
@@ -192,25 +345,29 @@
       padding: 14px 28px;
       border-radius: 50px;
       font-size: 1.1rem;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
       border: none;
       transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn-start {
+    .btn-play {
       flex: 1;
       background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
       color: white;
       box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     }
 
-    .btn-start:hover {
+    .btn-play:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
     }
 
-    .btn-pause {
+    .btn-stop {
       flex: 1;
       background: #334155;
       color: white;
@@ -218,8 +375,8 @@
 
     .btn-reset {
       background: transparent;
-      border: 1.5px solid #334155;
-      color: #94a3b8;
+      border: 2px solid #334155;
+      color: #64748b;
       width: 54px;
       height: 54px;
       border-radius: 50%;
@@ -230,81 +387,170 @@
     }
 
     .btn-reset:hover {
-      border-color: #ef4444;
-      color: #ef4444;
+      border-color: var(--error);
+      color: var(--error);
     }
 
-    .mic-tip {
+    .tip {
       font-size: 0.75rem;
-      color: #64748b;
+      color: #475569;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
 
-<div class="main-card">
-  <h1>🤫 课堂静音大挑战</h1>
+<!-- 星空背景 -->
+<div class="forest-bg" id="sky"></div>
+
+<!-- 主卡片 -->
+<div class="game-card">
+  <h1>🐼 保护熊猫宝宝的美梦</h1>
   
-  <!-- 音量状态球 -->
-  <div class="visualizer-container">
-    <div class="visual-ring"></div>
-    <div class="volume-orb" id="orb">
-      <span class="volume-value" id="vol-text">0</span>
-      <span class="volume-lbl">当前噪音</span>
+  <!-- 熊猫动画舞台 -->
+  <div class="panda-stage">
+    
+    <!-- 警告叹号 -->
+    <div class="alert-symbol" id="alert-sign">❗</div>
+    
+    <!-- 熊猫矢量图形 -->
+    <svg class="panda-svg" viewBox="0 0 220 220" id="panda-svg">
+      <!-- 身体 -->
+      <circle cx="110" cy="180" r="50" fill="#ffffff" stroke="#1e293b" stroke-width="4" />
+      <path d="M 75 160 Q 110 145 145 160" fill="none" stroke="#1e293b" stroke-width="4" />
+      
+      <!-- 耳朵 -->
+      <circle cx="65" cy="75" r="22" fill="#1e293b" class="panda-ear panda-ear-left" id="ear-l" />
+      <circle cx="65" cy="75" r="12" fill="#334155" class="panda-ear" />
+      <circle cx="155" cy="75" r="22" fill="#1e293b" class="panda-ear panda-ear-right" id="ear-r" />
+      <circle cx="155" cy="75" r="12" fill="#334155" class="panda-ear" />
+      
+      <!-- 头部 -->
+      <circle cx="110" cy="120" r="48" fill="#ffffff" stroke="#1e293b" stroke-width="4" />
+      
+      <!-- 眼睛黑圈 -->
+      <ellipse cx="88" cy="115" rx="14" ry="18" fill="#1e293b" transform="rotate(-15, 88, 115)" />
+      <ellipse cx="132" cy="115" rx="14" ry="18" fill="#1e293b" transform="rotate(15, 132, 115)" />
+      
+      <!-- 闭眼状态 (闭合弧线) -->
+      <g id="eyes-closed" class="panda-eye-sleep">
+        <path d="M 80 115 Q 88 122 96 115" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <path d="M 124 115 Q 132 122 140 115" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+      </g>
+      
+      <!-- 睁眼状态 (圆圈与泪水) -->
+      <g id="eyes-open" class="panda-eye-awake">
+        <!-- 眼珠 -->
+        <circle cx="88" cy="115" r="6" fill="#ffffff" />
+        <circle cx="88" cy="115" r="3" fill="#000000" />
+        <circle cx="132" cy="115" r="6" fill="#ffffff" />
+        <circle cx="132" cy="115" r="3" fill="#000000" />
+        <!-- 哭泣眼泪 -->
+        <path d="M 88 122 Q 86 132 84 135" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
+        <path d="M 132 122 Q 134 132 136 135" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
+      </g>
+      
+      <!-- 脸颊粉红 -->
+      <ellipse cx="72" cy="130" rx="7" ry="4" fill="#fca5a5" opacity="0.6" />
+      <ellipse cx="148" cy="130" rx="7" ry="4" fill="#fca5a5" opacity="0.6" />
+      
+      <!-- 鼻子与小嘴 -->
+      <polygon points="106,128 114,128 110,132" fill="#1e293b" />
+      <path d="M 106 135 Q 110 138 114 135" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round" />
+      
+      <!-- 手臂 (捂耳朵) -->
+      <g id="hand-l" class="panda-hand panda-hand-left">
+        <rect x="35" y="160" width="30" height="20" rx="10" fill="#1e293b" />
+      </g>
+      <g id="hand-r" class="panda-hand panda-hand-right">
+        <rect x="155" y="160" width="30" height="20" rx="10" fill="#1e293b" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- 动态状态横幅 -->
+  <div class="status-banner" id="status-txt" style="color: var(--success);">
+    😴 熊猫宝宝正在香甜入睡...
+  </div>
+
+  <!-- 收集到的星星计数器 -->
+  <div class="score-bank" id="bank">
+    <div class="bank-label">✨ 收集到的星星：</div>
+    <div class="bank-value" id="score-text">0</div>
+  </div>
+
+  <!-- 噪音显示器 -->
+  <div class="noise-container">
+    <div class="bar-label">
+      <span>🔊 教室音量：</span>
+      <span id="vol-pct">0%</span>
+    </div>
+    <div class="noise-meter">
+      <div class="noise-fill" id="noise-fill"></div>
     </div>
   </div>
 
-  <!-- 分数板块 -->
-  <div class="score-container">
-    <div class="score-label">累计挑战得分</div>
-    <div class="score-value" id="score-text">0</div>
-    <div class="points-speed" id="speed-text">保持安静获取积分</div>
-  </div>
-
-  <!-- 控制板块 -->
-  <div class="control-panel">
-    <div class="slider-header">
-      <span>🎤 麦克风灵敏度校准</span>
+  <!-- 灵敏度控制 -->
+  <div class="settings-panel">
+    <div class="settings-header">
+      <span>🎤 麦克风大小调节</span>
       <span style="color: var(--primary);" id="sensitivity-val">1.5x</span>
     </div>
     <input type="range" id="sensitivity" min="0.5" max="4.0" step="0.1" value="1.5" oninput="changeSensitivity(this.value)">
   </div>
 
-  <!-- 操作按钮 -->
-  <div class="action-group">
-    <button class="btn btn-start" id="btn-action" onclick="togglePlay()">▶ 开始运行</button>
-    <button class="btn-reset" onclick="resetGame()" title="重置分数">🔄</button>
+  <!-- 控制按钮 -->
+  <div class="action-row">
+    <button class="btn btn-play" id="btn-action" onclick="toggle挑战()">▶ 开始挑战</button>
+    <button class="btn-reset" onclick="reset挑战()" title="重置分数">🔄</button>
   </div>
 
-  <div class="mic-tip">请在提示时允许使用麦克风权限 · 声音完全本地处理</div>
+  <div class="tip">请点击开始挑战并允许麦克风权限，守护美梦吧！</div>
 </div>
 
 <script>
   let isRunning = false;
   let score = 0;
   let sensitivity = 1.5;
-  
+  let timeTicker = 0;
+
   let audioCtx = null;
   let micStream = null;
   let analyser = null;
   let dataArray = null;
-  let gameInterval = null;
+  let mainLoop = null;
 
-  async function initAudio() {
+  // 1. 初始化繁星夜空
+  const sky = document.getElementById('sky');
+  const numStars = 60;
+  const starElements = [];
+
+  for (let i = 0; i < numStars; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = star.style.height = `${2 + Math.random() * 4}px`;
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 80}%`;
+    sky.appendChild(star);
+    starElements.push(star);
+  }
+
+  // 2. 授权麦克风
+  async function initMicrophone() {
     if (audioCtx) return true;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       micStream = stream;
-      
+
       const source = audioCtx.createMediaStreamSource(stream);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 64;
       dataArray = new Uint8Array(analyser.frequencyBinCount);
       source.connect(analyser);
       return true;
-    } catch (err) {
-      alert("无法启用麦克风，请检查浏览器权限权限！");
+    } catch (e) {
+      alert("无法使用您的麦克风，请允许麦克风权限！");
       return false;
     }
   }
@@ -314,32 +560,35 @@
     document.getElementById('sensitivity-val').textContent = `${sensitivity.toFixed(1)}x`;
   }
 
-  async function togglePlay() {
+  async function toggle挑战() {
     const btn = document.getElementById('btn-action');
     
     if (!isRunning) {
-      const active = await initAudio();
+      const active = await initMicrophone();
       if (!active) return;
       
       isRunning = true;
       btn.textContent = "⏸ 暂停挑战";
-      btn.className = "btn btn-pause";
+      btn.className = "btn btn-stop";
       
       if (audioCtx.state === 'suspended') audioCtx.resume();
       
-      // 每 100ms 采样一次并更新得分
-      gameInterval = setInterval(updateFrame, 100);
+      mainLoop = setInterval(updateFrame, 100);
     } else {
       isRunning = false;
-      btn.textContent = "▶ 开始运行";
-      btn.className = "btn btn-start";
-      clearInterval(gameInterval);
+      btn.textContent = "▶ 开始挑战";
+      btn.className = "btn btn-play";
+      clearInterval(mainLoop);
+      
+      // 熊猫强制入睡
+      setPandaState('sleeping');
     }
   }
 
+  // 3. 核心周期更新 (每100ms)
   function updateFrame() {
     if (!isRunning || !analyser) return;
-    
+
     analyser.getByteFrequencyData(dataArray);
     let sum = 0;
     for (let i = 0; i < dataArray.length; i++) {
@@ -347,60 +596,177 @@
     }
     let rawAvg = sum / dataArray.length;
     
-    // 缩放到 0 - 100 噪音等级
+    // 计算 0-100 音量
     let volume = Math.min(100, Math.round(rawAvg * sensitivity));
     
-    // 越安静加分越多（绝对安静0分贝，秒加10分；极其吵闹100分贝，秒加0分）
-    // 每次周期 100ms，所以分值乘以 0.1
-    let addedPoints = Math.max(0, (100 - volume) / 10);
-    score += addedPoints;
+    // 更新音量进度条
+    document.getElementById('noise-fill').style.width = `${volume}%`;
+    document.getElementById('vol-pct').textContent = `${volume}%`;
+
+    // 4. 判定沉睡与惊醒状态
+    const statusTxt = document.getElementById('status-txt');
+    const alertSign = document.getElementById('alert-sign');
     
-    // 渲染 UI 状态
-    document.getElementById('vol-text').textContent = volume;
-    document.getElementById('score-text').textContent = Math.round(score);
-    
-    const speedText = document.getElementById('speed-text');
     if (volume < 15) {
-      speedText.textContent = `🍀 极度安静！秒加 +10 分`;
-      speedText.style.color = "#10b981";
-    } else if (volume < 40) {
-      speedText.textContent = `👍 较安静中，秒加 +${Math.round((100 - volume)/10)} 分`;
-      speedText.style.color = "#34d399";
+      // 状态：绝对安静，香甜入睡
+      setPandaState('sleeping');
+      statusTxt.textContent = "😴 熊猫宝宝睡得好香甜...";
+      statusTxt.style.color = "var(--success)";
+      alertSign.classList.remove('show');
+      
+      // 增加分数：越安静加分越快 (加权)
+      let pts = (100 - volume) / 10; // 每100ms增加
+      score += pts * 0.1; // 转换为秒加分
+      
+      // 触发 Zzz 和星星飘浮
+      timeTicker++;
+      if (timeTicker % 15 === 0) spawnZzz();
+      if (timeTicker % 10 === 0) {
+        spawnStarFeedback();
+        glowRandomStar(true);
+      }
+    } else if (volume < 35) {
+      // 状态：轻微声响，半梦半醒
+      setPandaState('disturbed');
+      statusTxt.textContent = "🤫 嘘！熊猫宝宝耳朵在动了...";
+      statusTxt.style.color = "var(--warning)";
+      alertSign.classList.remove('show');
+      
+      let pts = (100 - volume) / 10;
+      score += pts * 0.05; // 减半速度
     } else {
-      speedText.textContent = `⚠️ 太吵啦！得分极慢 (秒加 +${Math.round((100 - volume)/10)} 分)`;
-      speedText.style.color = "#f87171";
+      // 状态：吵闹越界，惊醒哭泣
+      setPandaState('awake');
+      statusTxt.textContent = "😭 太吵啦！熊猫宝宝被吵醒了！";
+      statusTxt.style.color = "var(--error)";
+      alertSign.classList.add('show');
+      
+      glowRandomStar(false); // 熄灭星星
     }
 
-    // 缩放并改变发光球体的发光强度与大小
-    const orb = document.getElementById('orb');
-    const scale = 1 + (volume / 200); // 噪音大则球体变大
-    orb.style.transform = `scale(${scale})`;
-    
-    if (volume > 40) {
-      // 吵闹红光
-      orb.style.background = 'radial-gradient(circle, #fecaca 0%, #ef4444 100%)';
-      orb.style.boxShadow = `0 0 ${20 + volume}px rgba(239, 68, 68, 0.6)`;
-    } else {
-      // 安静蓝绿光
-      orb.style.background = 'radial-gradient(circle, #e0fdf4 0%, #10b981 100%)';
-      orb.style.boxShadow = `0 0 ${20 + (40 - volume)}px rgba(16, 185, 129, 0.4)`;
+    // 渲染总分
+    document.getElementById('score-text').textContent = Math.round(score);
+  }
+
+  // 5. 设置熊猫的动作外观 (操控SVG子节点)
+  function setPandaState(state) {
+    const ears = [document.getElementById('ear-l'), document.getElementById('ear-r')];
+    const handL = document.getElementById('hand-l');
+    const handR = document.getElementById('hand-r');
+    const eyesSleep = document.getElementById('eyes-closed');
+    const eyesAwake = document.getElementById('eyes-open');
+    const panda = document.getElementById('panda-svg');
+
+    if (state === 'sleeping') {
+      // 闭眼，手放下，不摇晃
+      eyesSleep.style.opacity = '1';
+      eyesAwake.style.opacity = '0';
+      handL.className = 'panda-hand panda-hand-left';
+      handR.className = 'panda-hand panda-hand-right';
+      ears.forEach(e => e.classList.remove('shake-ears'));
+      panda.style.transform = 'scale(1)';
+    } else if (state === 'disturbed') {
+      // 闭眼，但耳朵颤抖
+      eyesSleep.style.opacity = '1';
+      eyesAwake.style.opacity = '0';
+      handL.className = 'panda-hand panda-hand-left';
+      handR.className = 'panda-hand panda-hand-right';
+      ears.forEach(e => e.classList.add('shake-ears'));
+      panda.style.transform = 'scale(1)';
+    } else if (state === 'awake') {
+      // 睁眼哭泣，捂耳朵，身体缩起来
+      eyesSleep.style.opacity = '0';
+      eyesAwake.style.opacity = '1';
+      handL.className = 'panda-hand panda-hand-left cover-ears-left';
+      handR.className = 'panda-hand panda-hand-right cover-ears-right';
+      ears.forEach(e => e.classList.remove('shake-ears'));
+      panda.style.transform = 'scale(0.95)';
     }
   }
 
-  function resetGame() {
+  // 6. 吐出“Zzz”睡眠泡泡
+  function spawnZzz() {
+    const bubble = document.createElement('div');
+    bubble.className = 'zzz-bubble';
+    bubble.textContent = Math.random() > 0.4 ? 'Z' : 'z';
+    
+    // 随机微调出生位置（靠近熊猫嘴部）
+    const stage = document.querySelector('.panda-stage');
+    const stageRect = stage.getBoundingClientRect();
+    
+    // 放在舞台中心偏下一些
+    bubble.style.left = `${stageRect.width / 2 + 10}px`;
+    bubble.style.top = `${stageRect.height / 2 + 25}px`;
+    
+    stage.appendChild(bubble);
+    
+    // 3秒后销毁
+    setTimeout(() => {
+      bubble.remove();
+    }, 3000);
+  }
+
+  // 7. 安静获取星星动画反馈
+  function spawnStarFeedback() {
+    const star = document.createElement('div');
+    star.className = 'floating-star-feedback';
+    star.textContent = '⭐';
+    
+    const stage = document.querySelector('.panda-stage');
+    const stageRect = stage.getBoundingClientRect();
+    const bankRect = document.getElementById('bank').getBoundingClientRect();
+    
+    // 初始位置从熊猫中心起跑
+    star.style.left = `${stageRect.width / 2}px`;
+    star.style.top = `${stageRect.height / 2}px`;
+    
+    // 计算移动差值，漂浮飞入下方的星星积攒金库
+    const tx = bankRect.left - stageRect.left - (stageRect.width / 2) + 20;
+    const ty = bankRect.top - stageRect.top - (stageRect.height / 2) + 15;
+    
+    star.style.setProperty('--tx', `${tx}px`);
+    star.style.setProperty('--ty', `${ty}px`);
+    
+    stage.appendChild(star);
+    setTimeout(() => {
+      star.remove();
+    }, 1200);
+  }
+
+  // 8. 繁星背景变亮/变暗控制
+  function glowRandomStar(turnOn) {
+    const idx = Math.floor(Math.random() * starElements.length);
+    const star = starElements[idx];
+    if (turnOn) {
+      star.classList.add('glow');
+    } else {
+      // 吵闹时随机熄灭一颗
+      const glowingStars = starElements.filter(s => s.classList.contains('glow'));
+      if (glowingStars.length > 0) {
+        const killIdx = Math.floor(Math.random() * glowingStars.length);
+        glowingStars[killIdx].classList.remove('glow');
+      }
+    }
+  }
+
+  function reset挑战() {
     score = 0;
+    timeTicker = 0;
     document.getElementById('score-text').textContent = "0";
-    document.getElementById('vol-text').textContent = "0";
-    document.getElementById('speed-text').textContent = "保持安静获取积分";
-    document.getElementById('speed-text').style.color = "#94a3b8";
+    document.getElementById('vol-pct').textContent = "0%";
+    document.getElementById('noise-fill').style.width = "0%";
     
-    const orb = document.getElementById('orb');
-    orb.style.transform = "scale(1)";
-    orb.style.background = 'radial-gradient(circle, #e0f2fe 0%, #0ea5e9 100%)';
-    orb.style.boxShadow = "0 0 30px rgba(14, 165, 233, 0.3)";
+    document.getElementById('status-txt').textContent = "😴 熊猫宝宝正在香甜入睡...";
+    document.getElementById('status-txt').style.color = "var(--success)";
+    document.getElementById('alert-sign').classList.remove('show');
     
+    // 熄灭所有背景星星
+    starElements.forEach(s => s.classList.remove('glow'));
+    
+    setPandaState('sleeping');
+
     if (isRunning) {
-      togglePlay(); // 暂停
+      toggle挑战();
     }
   }
 </script>
