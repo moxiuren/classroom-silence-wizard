@@ -12,7 +12,6 @@
   
   <style>
     :root {
-      --bg-day: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
       --bg-forest: #090d16;
       --primary: #38bdf8;
       --text: #f1f5f9;
@@ -41,19 +40,17 @@
       overflow: hidden;
     }
 
-    /* 森林繁星背景 */
+    /* 繁星背景 */
     .forest-bg {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 50% 30%, #1e1e38 0%, #07070f 80%);
+      background: radial-gradient(circle at 50% 30%, #17172b 0%, #05050b 80%);
       z-index: 1;
-      overflow: hidden;
     }
 
-    /* 动态繁星 */
     .star {
       position: absolute;
       background: white;
@@ -69,7 +66,7 @@
       transform: scale(1.5);
     }
 
-    /* 主界面卡片 */
+    /* 游戏卡片 */
     .game-card {
       position: relative;
       z-index: 10;
@@ -86,6 +83,14 @@
       flex-direction: column;
       align-items: center;
       gap: 20px;
+      transition: var(--transition);
+    }
+
+    /* 冻结状态：全灰色、变暗，让大声叫的反馈变得极其无趣 */
+    .game-card.frozen {
+      filter: grayscale(90%) brightness(0.7);
+      border-color: #3f3f46;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
 
     h1 {
@@ -97,7 +102,7 @@
       letter-spacing: 1px;
     }
 
-    /* 实验区/小熊猫渲染容器 */
+    /* 角色舞台 */
     .panda-stage {
       width: 100%;
       height: 240px;
@@ -107,23 +112,20 @@
       justify-content: center;
     }
 
-    /* SVG小熊猫角色样式 */
+    /* 熊猫 SVG */
     .panda-svg {
       width: 220px;
       height: 220px;
       transition: var(--transition);
     }
 
-    /* 小熊猫动画节点 */
     .panda-ear {
       transition: transform 0.1s ease;
       transform-origin: center bottom;
     }
-
     .panda-ear-left { transform-origin: 65px 75px; }
     .panda-ear-right { transform-origin: 155px 75px; }
 
-    /* 耳朵颤抖（吵闹时） */
     .shake-ears {
       animation: shakeEar 0.15s infinite alternate;
     }
@@ -133,28 +135,19 @@
       100% { transform: rotate(5deg); }
     }
 
-    .panda-eye-sleep {
-      transition: opacity 0.2s ease;
-      opacity: 1;
-    }
+    .panda-eye-sleep { transition: opacity 0.2s ease; opacity: 1; }
+    .panda-eye-awake { transition: opacity 0.2s ease; opacity: 0; }
 
-    .panda-eye-awake {
-      transition: opacity 0.2s ease;
-      opacity: 0;
-    }
-
-    /* 捂耳朵的双手 */
     .panda-hand {
       transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .panda-hand-left { transform-origin: 60px 170px; }
     .panda-hand-right { transform-origin: 160px 170px; }
 
-    /* 捂耳朵状态 */
     .cover-ears-left { transform: translate(15px, -35px) rotate(45deg); }
     .cover-ears-right { transform: translate(-15px, -35px) rotate(-45deg); }
 
-    /* 飘浮的 Zzz 泡泡 */
+    /* Zzz 泡泡 */
     .zzz-bubble {
       position: absolute;
       color: #7dd3fc;
@@ -168,26 +161,14 @@
     }
 
     @keyframes floatZzz {
-      0% {
-        transform: translate(10px, -20px) scale(0.6);
-        opacity: 0;
-      }
-      20% {
-        opacity: 0.8;
-      }
-      50% {
-        transform: translate(-15px, -70px) scale(1);
-      }
-      80% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translate(20px, -150px) scale(1.3);
-        opacity: 0;
-      }
+      0% { transform: translate(10px, -20px) scale(0.6); opacity: 0; }
+      20% { opacity: 0.8; }
+      50% { transform: translate(-15px, -70px) scale(1); }
+      80% { opacity: 0.8; }
+      100% { transform: translate(20px, -150px) scale(1.3); opacity: 0; }
     }
 
-    /* 收集到的星星动画 */
+    /* 星星回投动效 */
     .floating-star-feedback {
       position: absolute;
       font-size: 1.5rem;
@@ -198,42 +179,53 @@
     }
 
     @keyframes floatStarToBank {
-      0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(var(--tx), var(--ty)) scale(0.5);
-        opacity: 0.2;
-      }
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0.5); opacity: 0.2; }
     }
 
-    /* 警示叹号 */
-    .alert-symbol {
+    /* 冻结锁定遮罩层 (让画面看起来被锁死，无聊的黑白锁图标) */
+    .freeze-overlay {
       position: absolute;
-      top: 10px;
-      font-size: 3rem;
-      color: var(--error);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(9, 13, 22, 0.65);
+      border-radius: 36px;
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .lock-icon {
+      font-size: 3.5rem;
+      color: #a1a1aa;
+      animation: lockBounce 1s infinite alternate;
+    }
+
+    @keyframes lockBounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .lock-title {
+      font-size: 1.3rem;
       font-weight: 900;
-      text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
-      opacity: 0;
-      transform: scale(0.5);
-      transition: var(--transition);
-      pointer-events: none;
+      color: #e4e4e7;
     }
 
-    .alert-symbol.show {
-      opacity: 1;
-      transform: scale(1);
-      animation: heartBeat 0.5s infinite alternate;
+    .lock-timer {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 2.2rem;
+      color: var(--error);
+      font-weight: 700;
     }
 
-    @keyframes heartBeat {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.15); }
-    }
-
-    /* 状态提示语 */
+    /* 状态指示语 */
     .status-banner {
       font-size: 1.15rem;
       font-weight: 900;
@@ -242,9 +234,10 @@
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: var(--transition);
+      width: 100%;
     }
 
-    /* 分数看板 */
+    /* 星星仓库 */
     .score-bank {
       background: rgba(0, 0, 0, 0.4);
       border-radius: 24px;
@@ -254,7 +247,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: relative;
     }
 
     .bank-label {
@@ -275,7 +267,7 @@
       line-height: 1;
     }
 
-    /* 噪音进度条 */
+    /* 声音度量条 */
     .noise-container {
       width: 100%;
       text-align: left;
@@ -302,11 +294,11 @@
     .noise-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--success) 0%, var(--warning) 70%, var(--error) 100%);
+      background: #38bdf8;
       transition: width 0.1s ease;
     }
 
-    /* 灵敏度与设置 */
+    /* 灵敏度控制 */
     .settings-panel {
       width: 100%;
       background: rgba(0, 0, 0, 0.25);
@@ -334,7 +326,7 @@
       cursor: pointer;
     }
 
-    /* 控制按钮 */
+    /* 操作按钮 */
     .action-row {
       display: flex;
       gap: 15px;
@@ -404,16 +396,20 @@
 <div class="forest-bg" id="sky"></div>
 
 <!-- 主卡片 -->
-<div class="game-card">
+<div class="game-card" id="card">
+  
+  <!-- 冻结冷却锁定层 -->
+  <div class="freeze-overlay" id="freeze-mask">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">魔法阵冻结中...</div>
+    <div style="font-size: 0.85rem; color: #a1a1aa; font-weight: 700;">班级声音过大，请保持安静解锁：</div>
+    <div class="lock-timer" id="freeze-timer">5.0s</div>
+  </div>
+
   <h1>🐼 保护熊猫宝宝的美梦</h1>
   
-  <!-- 熊猫动画舞台 -->
+  <!-- 熊猫渲染容器 -->
   <div class="panda-stage">
-    
-    <!-- 警告叹号 -->
-    <div class="alert-symbol" id="alert-sign">❗</div>
-    
-    <!-- 熊猫矢量图形 -->
     <svg class="panda-svg" viewBox="0 0 220 220" id="panda-svg">
       <!-- 身体 -->
       <circle cx="110" cy="180" r="50" fill="#ffffff" stroke="#1e293b" stroke-width="4" />
@@ -438,16 +434,12 @@
         <path d="M 124 115 Q 132 122 140 115" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
       </g>
       
-      <!-- 睁眼状态 (圆圈与泪水) -->
+      <!-- 睁眼状态 -->
       <g id="eyes-open" class="panda-eye-awake">
-        <!-- 眼珠 -->
         <circle cx="88" cy="115" r="6" fill="#ffffff" />
         <circle cx="88" cy="115" r="3" fill="#000000" />
         <circle cx="132" cy="115" r="6" fill="#ffffff" />
         <circle cx="132" cy="115" r="3" fill="#000000" />
-        <!-- 哭泣眼泪 -->
-        <path d="M 88 122 Q 86 132 84 135" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
-        <path d="M 132 122 Q 134 132 136 135" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" />
       </g>
       
       <!-- 脸颊粉红 -->
@@ -468,21 +460,21 @@
     </svg>
   </div>
 
-  <!-- 动态状态横幅 -->
+  <!-- 状态提示语 -->
   <div class="status-banner" id="status-txt" style="color: var(--success);">
     😴 熊猫宝宝正在香甜入睡...
   </div>
 
-  <!-- 收集到的星星计数器 -->
+  <!-- 星星计数器 -->
   <div class="score-bank" id="bank">
     <div class="bank-label">✨ 收集到的星星：</div>
     <div class="bank-value" id="score-text">0</div>
   </div>
 
-  <!-- 噪音显示器 -->
+  <!-- 噪音度量 -->
   <div class="noise-container">
     <div class="bar-label">
-      <span>🔊 教室音量：</span>
+      <span>🔊 教室音量等级：</span>
       <span id="vol-pct">0%</span>
     </div>
     <div class="noise-meter">
@@ -505,7 +497,7 @@
     <button class="btn-reset" onclick="reset挑战()" title="重置分数">🔄</button>
   </div>
 
-  <div class="tip">请点击开始挑战并允许麦克风权限，守护美梦吧！</div>
+  <div class="tip">故意吵闹会让魔法阵“死机冻结”，无法获得星星哦！</div>
 </div>
 
 <script>
@@ -513,6 +505,9 @@
   let score = 0;
   let sensitivity = 1.5;
   let timeTicker = 0;
+
+  // 冻结锁定变量 (以0.1秒为单位)
+  let freezeTicksLeft = 0; 
 
   let audioCtx = null;
   let micStream = null;
@@ -543,7 +538,7 @@
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       micStream = stream;
 
-      const source = audioCtx.createMediaStreamSource(stream);
+      const source = sourceNode = audioCtx.createMediaStreamSource(stream);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 64;
       dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -582,6 +577,7 @@
       
       // 熊猫强制入睡
       setPandaState('sleeping');
+      hideFreezeOverlay();
     }
   }
 
@@ -603,52 +599,104 @@
     document.getElementById('noise-fill').style.width = `${volume}%`;
     document.getElementById('vol-pct').textContent = `${volume}%`;
 
-    // 4. 判定沉睡与惊醒状态
+    // 5. 冻结冷却锁定逻辑
+    if (freezeTicksLeft > 0) {
+      freezeTicksLeft--;
+      
+      // 渲染冷却倒计时
+      document.getElementById('freeze-timer').textContent = `${(freezeTicksLeft / 10).toFixed(1)}s`;
+      
+      // 冷却期间无法获取任何积分
+      if (freezeTicksLeft === 0) {
+        // 倒计时归零时，必须保持绝对安静才可以解锁
+        if (volume < 15) {
+          hideFreezeOverlay();
+          setPandaState('sleeping');
+        } else {
+          // 如果依然吵闹，重新延长 3 秒惩罚，让吵闹行为变得极端无聊与受挫！
+          freezeTicksLeft = 30; 
+          playDullBuzzer();
+        }
+      }
+      return;
+    }
+
+    // 6. 正常挑战状态判断
     const statusTxt = document.getElementById('status-txt');
-    const alertSign = document.getElementById('alert-sign');
     
     if (volume < 15) {
       // 状态：绝对安静，香甜入睡
       setPandaState('sleeping');
       statusTxt.textContent = "😴 熊猫宝宝睡得好香甜...";
       statusTxt.style.color = "var(--success)";
-      alertSign.classList.remove('show');
       
-      // 增加分数：越安静加分越快 (加权)
-      let pts = (100 - volume) / 10; // 每100ms增加
-      score += pts * 0.1; // 转换为秒加分
+      // 越安静加分越快 (加权分值)
+      let pts = (100 - volume) / 10; 
+      score += pts * 0.1; 
       
-      // 触发 Zzz 和星星飘浮
       timeTicker++;
       if (timeTicker % 15 === 0) spawnZzz();
       if (timeTicker % 10 === 0) {
         spawnStarFeedback();
         glowRandomStar(true);
       }
-    } else if (volume < 35) {
-      // 状态：轻微声响，半梦半醒
+    } else if (volume < 32) {
+      // 状态：轻微声音，警觉预警
       setPandaState('disturbed');
       statusTxt.textContent = "🤫 嘘！熊猫宝宝耳朵在动了...";
       statusTxt.style.color = "var(--warning)";
-      alertSign.classList.remove('show');
       
       let pts = (100 - volume) / 10;
-      score += pts * 0.05; // 减半速度
+      score += pts * 0.05; // 速度减半
     } else {
-      // 状态：吵闹越界，惊醒哭泣
-      setPandaState('awake');
-      statusTxt.textContent = "😭 太吵啦！熊猫宝宝被吵醒了！";
-      statusTxt.style.color = "var(--error)";
-      alertSign.classList.add('show');
-      
-      glowRandomStar(false); // 熄灭星星
+      // 状态：吵闹越界，触发死机冻结惩罚！
+      triggerFreezeLockout();
     }
 
     // 渲染总分
     document.getElementById('score-text').textContent = Math.round(score);
   }
 
-  // 5. 设置熊猫的动作外观 (操控SVG子节点)
+  // 7. 触发冻结惩罚
+  function triggerFreezeLockout() {
+    freezeTicksLeft = 50; // 50个100ms = 5秒
+    showFreezeOverlay();
+    setPandaState('awake');
+    glowRandomStar(false); // 扣减夜空一颗星星
+    playDullBuzzer();
+  }
+
+  function showFreezeOverlay() {
+    document.getElementById('freeze-mask').style.display = 'flex';
+    document.getElementById('card').classList.add('frozen');
+    document.getElementById('status-txt').textContent = "⚠️ 熊猫宝宝被吵醒了！画面已锁定...";
+    document.getElementById('status-txt').style.color = "var(--error)";
+  }
+
+  function hideFreezeOverlay() {
+    document.getElementById('freeze-mask').style.display = 'none';
+    document.getElementById('card').classList.remove('frozen');
+    freezeTicksLeft = 0;
+  }
+
+  // 8. 播放无聊的闷响（作为惩罚声效，区别于好玩的音效）
+  function playDullBuzzer() {
+    if (!audioCtx) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(100, audioCtx.currentTime); // 低频率闷响
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    } catch(e){}
+  }
+
+  // 9. 设置熊猫的动作外观 (操控SVG子节点)
   function setPandaState(state) {
     const ears = [document.getElementById('ear-l'), document.getElementById('ear-r')];
     const handL = document.getElementById('hand-l');
@@ -658,7 +706,6 @@
     const panda = document.getElementById('panda-svg');
 
     if (state === 'sleeping') {
-      // 闭眼，手放下，不摇晃
       eyesSleep.style.opacity = '1';
       eyesAwake.style.opacity = '0';
       handL.className = 'panda-hand panda-hand-left';
@@ -666,7 +713,6 @@
       ears.forEach(e => e.classList.remove('shake-ears'));
       panda.style.transform = 'scale(1)';
     } else if (state === 'disturbed') {
-      // 闭眼，但耳朵颤抖
       eyesSleep.style.opacity = '1';
       eyesAwake.style.opacity = '0';
       handL.className = 'panda-hand panda-hand-left';
@@ -674,7 +720,6 @@
       ears.forEach(e => e.classList.add('shake-ears'));
       panda.style.transform = 'scale(1)';
     } else if (state === 'awake') {
-      // 睁眼哭泣，捂耳朵，身体缩起来
       eyesSleep.style.opacity = '0';
       eyesAwake.style.opacity = '1';
       handL.className = 'panda-hand panda-hand-left cover-ears-left';
@@ -684,30 +729,28 @@
     }
   }
 
-  // 6. 吐出“Zzz”睡眠泡泡
+  // 10. 吐出“Zzz”睡眠泡泡
   function spawnZzz() {
+    if (freezeTicksLeft > 0) return;
     const bubble = document.createElement('div');
     bubble.className = 'zzz-bubble';
     bubble.textContent = Math.random() > 0.4 ? 'Z' : 'z';
     
-    // 随机微调出生位置（靠近熊猫嘴部）
     const stage = document.querySelector('.panda-stage');
     const stageRect = stage.getBoundingClientRect();
     
-    // 放在舞台中心偏下一些
     bubble.style.left = `${stageRect.width / 2 + 10}px`;
     bubble.style.top = `${stageRect.height / 2 + 25}px`;
     
     stage.appendChild(bubble);
-    
-    // 3秒后销毁
     setTimeout(() => {
       bubble.remove();
     }, 3000);
   }
 
-  // 7. 安静获取星星动画反馈
+  // 11. 安静获取星星动画反馈
   function spawnStarFeedback() {
+    if (freezeTicksLeft > 0) return;
     const star = document.createElement('div');
     star.className = 'floating-star-feedback';
     star.textContent = '⭐';
@@ -716,11 +759,9 @@
     const stageRect = stage.getBoundingClientRect();
     const bankRect = document.getElementById('bank').getBoundingClientRect();
     
-    // 初始位置从熊猫中心起跑
     star.style.left = `${stageRect.width / 2}px`;
     star.style.top = `${stageRect.height / 2}px`;
     
-    // 计算移动差值，漂浮飞入下方的星星积攒金库
     const tx = bankRect.left - stageRect.left - (stageRect.width / 2) + 20;
     const ty = bankRect.top - stageRect.top - (stageRect.height / 2) + 15;
     
@@ -733,14 +774,14 @@
     }, 1200);
   }
 
-  // 8. 繁星背景变亮/变暗控制
+  // 12. 繁星背景控制
   function glowRandomStar(turnOn) {
+    if (freezeTicksLeft > 0) return;
     const idx = Math.floor(Math.random() * starElements.length);
     const star = starElements[idx];
     if (turnOn) {
       star.classList.add('glow');
     } else {
-      // 吵闹时随机熄灭一颗
       const glowingStars = starElements.filter(s => s.classList.contains('glow'));
       if (glowingStars.length > 0) {
         const killIdx = Math.floor(Math.random() * glowingStars.length);
@@ -758,12 +799,11 @@
     
     document.getElementById('status-txt').textContent = "😴 熊猫宝宝正在香甜入睡...";
     document.getElementById('status-txt').style.color = "var(--success)";
-    document.getElementById('alert-sign').classList.remove('show');
     
-    // 熄灭所有背景星星
     starElements.forEach(s => s.classList.remove('glow'));
     
     setPandaState('sleeping');
+    hideFreezeOverlay();
 
     if (isRunning) {
       toggle挑战();
